@@ -13,17 +13,10 @@ var show_corners = true;
 var visible = true;
 var gui
 
-var vertices = [];
-
-//Curve variables
+//Curve manager class
 var curveMgr;
-var c1, c2, d1, d2;
-var active_curve;
-var c1_col, c2_col, d1_col, d2_col
-
 //ruled surface
 var rc, rd;
-
 //patch
 var patch;
 
@@ -50,20 +43,13 @@ function setup() {
                   );
 
   curveMgr = new CurveManager(curve_type);
-  let curves = curveMgr.curves;
-  vertices = curveMgr.vertices;
-
-  // c1 = curves[0];
-  // d1 = curves[1];
-  // c2 = curves[2];
-  // d2 = curves[3];
 
   //init default ruled surface
-  rc = new RuledSurface(mix_function, curves[0], curves[2], false, false);
-  rd = new RuledSurface(mix_function, curves[1], curves[3], false, true);
+  rc = new RuledSurface(mix_function, curveMgr.getc1(), curveMgr.getc2(), false, false);
+  rd = new RuledSurface(mix_function, curveMgr.getd1(), curveMgr.getd2(), false, true);
 
   //init cefault patch
-  patch = new Patch(rc, rc.mixFuncs, rd, rd.mixFuncs, vertices);
+  patch = new Patch(rc, rc.mixFuncs, rd, rd.mixFuncs, curveMgr.vertices);
 
   frameRate(30)
 
@@ -73,6 +59,7 @@ function setup() {
 function draw() {
 
   curveMgr.setActiveCurve(edit_curve);
+  curveMgr.setCurveType(curve_type);
 
   clear();
 
@@ -86,9 +73,8 @@ function draw() {
   if(show_boundary_curves)
     curveMgr.drawCurves();
 
-  if(show_corners){
+  if(show_corners)
     curveMgr.drawCorners();
-  }
 
   //draw ruled surface
   if(show_rc)
@@ -103,10 +89,6 @@ function draw() {
   //show patch
   if(show_patch)
     patch.draw();
-  
-    //edit curve
-  if(active_curve)
-    active_curve.drawCp();
 }
 
 function getRelativeMousePos(){

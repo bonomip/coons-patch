@@ -1,29 +1,66 @@
 class CurveManager {
     constructor(type) {
 
+        this.curveType = type;
         this.curves = [] // this struct will store 
                          // four function describing the curves
-        var c1_col = color('#e400ff')
-        var c2_col = color('#00FFFF')
-        var d1_col = color('#0000FF')
-        var d2_col = color('#FFFFFF')
+        this.c1_col = color('#e400ff')
+        this.c2_col = color('#00FFFF')
+        this.d1_col = color('#0000FF')
+        this.d2_col = color('#FFFFFF')
 
         this.vertices = [   createVector(-50,-50, 0), //top left
                             createVector(50,-50, 0),  //top right
                             createVector(50, 50, 0), //bottom right
                             createVector(-50, 50, 0) ] //bottom left
 
-        switch(type){
-                case 'Bezier':
-                    this.curves.push(new BezierCurve(this.vertices[3], this.vertices[2], c1_col));
-                    this.curves.push(new BezierCurve(this.vertices[3], this.vertices[0], d1_col));
-                    this.curves.push(new BezierCurve(this.vertices[0], this.vertices[1], c2_col));
-                    this.curves.push(new BezierCurve(this.vertices[2], this.vertices[1], d2_col));
+        this.createCurves();
+    }
+
+    createCurves(){
+        switch(this.curveType){
+            case 'Bezier':
+                this.createBezierCurves();
                 break;
-            default:
-                console.log("Invalid curve type");
+            case 'Polynomial':
+                this.createPolynomialCurves();
                 break;
+        default:
+            console.log("Invalid curve type");
+            break;
         }
+    }
+
+    createBezierCurves(){
+        this.curves.push(
+            new BezierCurve(
+                this.vertices[3], 
+                this.vertices[2], 
+                this.c1_col)
+            );
+        this.curves.push(
+            new BezierCurve(
+                this.vertices[3], 
+                this.vertices[0], 
+                this.d1_col)
+            );
+        this.curves.push(
+            new BezierCurve(
+                this.vertices[0], 
+                this.vertices[1], 
+                this.c2_col)
+            );
+        this.curves.push(
+            new BezierCurve(
+                this.vertices[2], 
+                this.vertices[1], 
+                this.d2_col)
+            );
+    }
+
+    createPolynomialCurves(){
+        //TODO: 
+        console.log("todo!")
     }
 
     drawCurves(){
@@ -51,19 +88,42 @@ class CurveManager {
     point(this.vertices[3])
     }
 
+    getc1(){
+        return this.curves[0];
+    }
+
+    getc2(){
+        return this.curves[2];
+    }
+
+    getd1(){
+        return this.curves[1];
+    }
+
+    getd2(){
+        return this.curves[3];
+    }
+
+    setCurveType(type){
+        if(this.curveType!=type){
+            this.curveType=type;
+            this.createCurves();
+        }
+    }
+
     setActiveCurve(id){
         switch(id){
             case 'c1':
-                this.activeCurve = this.curves[0];
+                this.activeCurve = this.getc1();
                 break;
             case 'c2':
-                this.activeCurve = this.curves[2];
+                this.activeCurve = this.getc2();
                 break;
             case 'd1':
-                this.activeCurve = this.curves[1];
+                this.activeCurve = this.getd1();
                 break;
             case 'd2':
-                this.activeCurve = this.curves[3];
+                this.activeCurve = this.getd2();
                 break;
             default:
                 this.activeCurve = false;
@@ -86,4 +146,4 @@ class CurveManager {
     }
 }
 
-CurveManager.types = ['Bezier', 'polynomials1', 'polynomials2'];
+CurveManager.types = ['Bezier', 'Polynomial'];
