@@ -4,7 +4,8 @@
 //GUI VARIABLES
 var curve_type = CurveManager.types;
 var edit_curve = [' ', 'c1', 'c2', 'd1', 'd2'];
-var mix_function = RuledSurface.mixFuncType;
+var function_f = SurfaceManager.mixFuncType;
+var function_g = SurfaceManager.mixFuncType;
 var show_boundary_curves = true;
 var scaleFactor = 3;
 var scaleFactorMin = 1;
@@ -21,12 +22,9 @@ var gui
 //Curve manager class
 var curveMgr;
 //ruled surface
-var rc, rd;
-//patch
-var patch;
+var surfMgr;
 
 var deltas = [0.03, 0.0175, 0.012, 0.0095, 0.008];
-var r_camera;
 
 function setup() {
 
@@ -38,7 +36,8 @@ function setup() {
                   'curve_type',
                   'show_boundary_curves',
                   'edit_curve',
-                  'mix_function',
+                  'function_f',
+                  'function_g',
                   'show_rc',
                   'show_rd',
                   'show_rcd',
@@ -48,15 +47,8 @@ function setup() {
                   );
 
   curveMgr = new CurveManager(curve_type);
+  surfMgr = new SurfaceManager(function_f, function_g, curveMgr);
 
-  //init default ruled surface
-  rc = new RuledSurface(mix_function, curveMgr.getc1(), curveMgr.getc2(), false, false);
-  rd = new RuledSurface(mix_function, curveMgr.getd1(), curveMgr.getd2(), false, true);
-
-  //init default patch
-  patch = new Patch(rc, rc.mixFuncs, rd, rd.mixFuncs, curveMgr.vertices);
-
-  r_camera = camera();
   frameRate(30)
 
   //noLoop();
@@ -73,34 +65,28 @@ function draw() {
 
   if(orbit_control)
     orbitControl(4, 4, 0);
-  else{
-    if(edit_curve != ' '){
-        camera();
-    }
-  }
+  else if(edit_curve != ' ')
+    camera();
     
 
   scale(scaleFactor);
   
   if(show_boundary_curves)
     curveMgr.drawCurves(getDelta());
-
   if(show_corners)
     curveMgr.drawCorners();
 
-  //draw ruled surface
+  surfMgr.updateDelta(getDelta());
+  surfMgr.updateMixFunction(function_f, function_g);
+
   if(show_rc)
-    rc.draw(getDelta());
-
+    surfMgr.drawRc();
   if(show_rd)
-    rd.draw(getDelta());
-  
+    surfMgr.drawRd();
   if(show_rcd)
-    patch.drawRcd(getDelta());
-
-  //show patch
+    surfMgr.drawRcd();
   if(show_patch)
-    patch.draw(getDelta());
+    surfMgr.drawPatch();
 }
 
 function getDelta(){

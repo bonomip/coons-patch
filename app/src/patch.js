@@ -3,18 +3,26 @@ class Patch{
     constructor(rc, fs, rd, gs, vertices, ccolor){
         //first ruled surface with its mix functions
         this.rc = rc;
-        this.f1 = fs['f1'];
-        this.f2 = fs['f2'];
+        this.updateF(fs);
         //second ruled surface with its mix functions
         this.rd = rd;
-        this.g1 = gs['f1'];
-        this.g2 = gs['f2'];
+        this.updateG(gs);
         //matrix of corners of the patch
         this.mat = [ [ vertices[3], vertices[2] ],
                      [ vertices[0], vertices[1]]];
 
         //style variables
         this.color = ccolor ? ccolor : color('#FFFAAA');
+    }
+
+    updateF(func){
+        this.f1 = func[0];
+        this.f2 = func[1];
+    }
+
+    updateG(func){
+        this.g1 = func[0];
+        this.g2 = func[1];
     }
 
 

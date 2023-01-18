@@ -9,7 +9,7 @@ class CurveManager {
         this.d1_col = color('#0000FF')
         this.d2_col = color('#FFFFFF')
 
-        this.vertices = [   createVector(-50,-50, -50), //top left
+        this.vertices = [   createVector(-50,-50, 0), //top left
                             createVector(50,-50, 0),  //top right
                             createVector(50, 50, -50), //bottom right
                             createVector(-50, 50, 0) ] //bottom left

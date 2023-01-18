@@ -1,19 +1,19 @@
 class RuledSurface {
 
     constructor(mixType, c1, c2, ccolor, inv){
-
-        switch(mixType){
-            case 'Linear':
-                this.mixFuncs = RuledSurface.linear;
-                break;
-            default:
-                this.mixFuncs = RuledSurface.linear;
-        }
-
+        this.switchMixFunction(mixType);
         this.c1 = c1;
         this.c2 = c2;
         this.inv = inv;
         this.color = ccolor ? ccolor : color('#FFFFFF')
+    }
+
+    switchMixFunction(type){
+
+        if( Object.keys(SurfaceManager.mixFuncs).includes(type) )
+            this.mixFuncs = SurfaceManager.mixFuncs[type];
+        else 
+            alert("invalid mix function type: ".concat(type));
     }
 
     draw(delta){
@@ -33,37 +33,12 @@ class RuledSurface {
     func(u, v){
         return  this.inv ?
                     //Rd 
-                    this.c1.func(v).mult(this.mixFuncs['f1'](u))
-                    .add(this.c2.func(v).mult(this.mixFuncs['f2'](u)))
+                    this.c1.func(v).mult(this.mixFuncs[0](u))
+                    .add(this.c2.func(v).mult(this.mixFuncs[1](u)))
                     : 
                     //Rc
-                    this.c1.func(u).mult(this.mixFuncs['f1'](v))
-                    .add(this.c2.func(u).mult(this.mixFuncs['f2'](v))); 
+                    this.c1.func(u).mult(this.mixFuncs[0](v))
+                    .add(this.c2.func(u).mult(this.mixFuncs[1](v))); 
     }
 
-}
-
-RuledSurface.mixFuncType = ['Linear'];
-
-/**
-*
-* @param {float} v - must be between 0 and 1;
-*
-*/
-RuledSurface.linear_f1 = function(v){
-    return (1-v);
-}
-
-/**
-*
-* @param {float} v - must be between 0 and 1;
-*
-*/
-RuledSurface.linear_f2 = function(v){
-    return v;
-}
-
-RuledSurface.linear = {
-    'f1' : RuledSurface.linear_f1,
-    'f2' : RuledSurface.linear_f2
 }
