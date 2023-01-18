@@ -31,7 +31,10 @@ function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 
   // Create Layout GUI
-  gui = createGui('Coons patch');
+  
+
+  gui = p5.prototype.createGui('Coons patch');
+
   gui.addGlobals( 'scaleFactor',
                   'curve_type',
                   'show_boundary_curves',
@@ -42,40 +45,43 @@ function setup() {
                   'show_rd',
                   'show_rcd',
                   'show_patch', 
-                  'orbit_control',
                   'show_corners'
                   );
+
+  gui.prototype.addBoolean('orbit_control', orbit_control, myOrbitCallBack)
 
   curveMgr = new CurveManager(curve_type);
   surfMgr = new SurfaceManager(function_f, function_g, curveMgr);
 
   frameRate(30)
 
-  //noLoop();
+  noLoop();
 }
 
 function draw() {
-
-  curveMgr.setActiveCurve(edit_curve);
-  curveMgr.setCurveType(curve_type);
-
+  
   clear();
-
   background(125);
 
-  if(orbit_control)
+  if(orbit_control){
     orbitControl(4, 4, 0);
-  else if(edit_curve != ' ')
-    camera();
-    
+  } else {
+    if(edit_curve != ' ')
+      camera();
+  }
 
   scale(scaleFactor);
   
+  //curves
+  curveMgr.setActiveCurve(edit_curve);
+  curveMgr.setCurveType(curve_type);
+
   if(show_boundary_curves)
     curveMgr.drawCurves(getDelta());
   if(show_corners)
     curveMgr.drawCorners();
 
+  //surfaces
   surfMgr.updateDelta(getDelta());
   surfMgr.updateMixFunction(function_f, function_g);
 
@@ -87,6 +93,16 @@ function draw() {
     surfMgr.drawRcd();
   if(show_patch)
     surfMgr.drawPatch();
+}
+
+function myOrbitCallBack(value) {  
+
+  orbit_control = value;
+
+  if(value)
+    loop();
+  else
+    noLoop();
 }
 
 function getDelta(){
@@ -106,6 +122,9 @@ function mouseDragged(){
 }
 
 function mouseReleased(){
+  if(orbit_control)
+    gui.prototype.setValue('orbit_control', false)
+  
   curveMgr.mouseReleased();
 }
 

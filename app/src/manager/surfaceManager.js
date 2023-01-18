@@ -74,11 +74,11 @@ SurfaceManager.mixFuncs = {
         function(t){return t;}
     ],
     'Berstein_3' : [
-        function(t){ return BernsteinPolynomial.three1(t);},
-        function(t){ return BernsteinPolynomial.three2(t);},
+        function(t){ return BernsteinPolynomial.three(t);},
+        function(t){ return 1 - BernsteinPolynomial.three(t);},
     ],
     'Berstein_15' : [
-        function(t){ return BernsteinPolynomial.fiveteen1(t);},
-        function(t){ return BernsteinPolynomial.fiveteen2(t);},
+        function(t){ return BernsteinPolynomial.fiveteen(t);},
+        function(t){ return 1 - BernsteinPolynomial.fiveteen(t);},
     ],
 }

@@ -131,18 +131,25 @@ class CurveManager {
     }
 
     mousePressed(){
-        if(this.activeCurve && !orbit_control)
+        if(this.activeCurve && !orbit_control){
             this.activeCurve.clicked();
+            loop();
+        }
+            
     }
 
     mouseDragged(){
-        if(this.activeCurve && !orbit_control)
+        if(this.activeCurve && !orbit_control){
             this.activeCurve.dragged();
+        }
+            
     }
 
     mouseReleased(){
-        if(this.activeCurve && !orbit_control)
+        if(this.activeCurve && !orbit_control){
             this.activeCurve.released();
+            noLoop();
+        }
     }
 }
 

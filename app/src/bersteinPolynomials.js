@@ -25,21 +25,14 @@ BernsteinPolynomial.B = function(n, k, t) {
   return t1 * t2 * t3;
 }
 
-BernsteinPolynomial.three1 = function(t){
+BernsteinPolynomial.three = function(t){
   return  BernsteinPolynomial.round ( 
             BernsteinPolynomial.B(3, 0, t) +
             BernsteinPolynomial.B(3, 2, t) 
           );
 }
 
-BernsteinPolynomial.three2 = function(t){
-  return  BernsteinPolynomial.round ( 
-            BernsteinPolynomial.B(3, 3, t) + 
-            BernsteinPolynomial.B(3, 1, t) 
-          );
-}
-
-BernsteinPolynomial.fiveteen1 = function(t){
+BernsteinPolynomial.fiveteen = function(t){
   return  BernsteinPolynomial.round ( 
             BernsteinPolynomial.B(15, 0, t) +
             BernsteinPolynomial.B(15, 2, t) +
@@ -47,21 +40,6 @@ BernsteinPolynomial.fiveteen1 = function(t){
             BernsteinPolynomial.B(15, 7, t) +
             BernsteinPolynomial.B(15, 11, t) +
             BernsteinPolynomial.B(15, 12, t) 
-          );
-}
-
-BernsteinPolynomial.fiveteen2 = function(t){
-  return  BernsteinPolynomial.round ( 
-            BernsteinPolynomial.B(15, 1, t) +
-            BernsteinPolynomial.B(15, 3, t) +
-            BernsteinPolynomial.B(15, 4, t) +
-            BernsteinPolynomial.B(15, 5, t) +
-            BernsteinPolynomial.B(15, 8, t) +
-            BernsteinPolynomial.B(15, 9, t) +
-            BernsteinPolynomial.B(15, 10, t) +
-            BernsteinPolynomial.B(15, 13, t) +
-            BernsteinPolynomial.B(15, 14, t) +
-            BernsteinPolynomial.B(15, 15, t) 
           );
 }
 
