@@ -14,7 +14,6 @@ class Patch{
                      [ vertices[0], vertices[1]]];
 
         //style variables
-        this.delta = 0.01;
         this.color = ccolor ? ccolor : color('#FFFAAA');
     }
 
@@ -35,28 +34,28 @@ class Patch{
     }
 
 
-    drawRcd(){
+    drawRcd(delta){
         noFill();
-        for (let v = 0; v <= 1; v += this.delta) {
-            for (let u = 0; u <= 1; u += this.delta) {  
+        for (let v = 0; v <= 1; v += delta) {
+            for (let u = 0; u <= 1; u += delta) {  
                 //stroke(this.color);
                 stroke(u * 300, v * 300, 255);
                 strokeWeight(2);
                 let p = this.rcd(u, v);
-                point(p.x, p.y);
+                point(p.x, p.y, p.z);
             }
         }
     }
 
-    draw(){
+    draw(delta){
         noFill();
-        for (let v = 0; v <= 1; v += this.delta) {
-            for (let u = 0; u <= 1; u += this.delta) {  
+        for (let v = 0; v <= 1; v += delta) {
+            for (let u = 0; u <= 1; u += delta) {  
                 //stroke(this.color);
                 stroke(u * 300, v * 300, 255);
                 strokeWeight(2);
                 let p = this.func(u, v);
-                point(p.x, p.y);
+                point(p.x, p.y, p.z);
             }
         }
     }

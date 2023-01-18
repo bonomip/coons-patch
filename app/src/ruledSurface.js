@@ -13,21 +13,18 @@ class RuledSurface {
         this.c1 = c1;
         this.c2 = c2;
         this.inv = inv;
-
-        this.delta = 0.01;
         this.color = ccolor ? ccolor : color('#FFFFFF')
-
     }
 
-    draw(){
+    draw(delta){
         noFill();
-        for (let v = 0; v <= 1; v += this.delta) {
-            for (let u = 0; u <= 1; u += this.delta) {  
+        for (let v = 0; v <= 1; v += delta) {
+            for (let u = 0; u <= 1; u += delta) {  
                 //stroke(this.color);
                 stroke(u * 300, v * 300, 255);
                 strokeWeight(2);
                 let p = this.func(u, v);
-                point(p.x, p.y);
+                point(p.x, p.y, p.z);
             }
         }
 

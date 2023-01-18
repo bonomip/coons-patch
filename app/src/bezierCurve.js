@@ -6,14 +6,13 @@ class BezierCurve {
 
     constructor(v0, v1, col) {
         this.cps = this.createDefaultControlPoints(v0, v1)
-        this.delta = 0.001;
         this.color = col ? col : color('#FF99CC')
         this.grabbed = [false, false];
     }
 
-    draw(){
+    draw(delta){
         noFill();
-        for (let t = 0; t <= 1.00001; t += this.delta) {
+        for (let t = 0; t <= 1.00001; t += delta) {
           stroke(this.color);
           strokeWeight(2);
           let v = this.func(t);
@@ -25,12 +24,8 @@ class BezierCurve {
         noFill();
         
         stroke(0, 0, 0, 1);
-        strokeWeight(BezierCurve.cpRadius*2);
-        point(this.cps[1].x, this.cps[1].y, this.cps[1].z); 
-
-        stroke(0, 0, 0, 1);
-        strokeWeight(BezierCurve.cpRadius*2);
-        point(this.cps[2].x, this.cps[2].y, this.cps[2].z, );
+        circle(this.cps[1].x, this.cps[1].y, BezierCurve.cpRadius)
+        circle(this.cps[2].x, this.cps[2].y, BezierCurve.cpRadius)
     }
 
     createDefaultControlPoints(cp0, cp3){

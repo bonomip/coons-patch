@@ -9,9 +9,9 @@ class CurveManager {
         this.d1_col = color('#0000FF')
         this.d2_col = color('#FFFFFF')
 
-        this.vertices = [   createVector(-50,-50, 0), //top left
+        this.vertices = [   createVector(-50,-50, -50), //top left
                             createVector(50,-50, 0),  //top right
-                            createVector(50, 50, 0), //bottom right
+                            createVector(50, 50, -50), //bottom right
                             createVector(-50, 50, 0) ] //bottom left
 
         this.createCurves();
@@ -63,12 +63,12 @@ class CurveManager {
         console.log("todo!")
     }
 
-    drawCurves(){
+    drawCurves(delta){
         this.curves.forEach(element => {
-            element.draw();
+            element.draw(delta);
         });
 
-        if(this.activeCurve)
+        if(this.activeCurve && !orbit_control)
             this.activeCurve.drawEdit();
         
     }
@@ -131,17 +131,17 @@ class CurveManager {
     }
 
     mousePressed(){
-        if(this.activeCurve)
+        if(this.activeCurve && !orbit_control)
             this.activeCurve.clicked();
     }
 
     mouseDragged(){
-        if(this.activeCurve)
+        if(this.activeCurve && !orbit_control)
             this.activeCurve.dragged();
     }
 
     mouseReleased(){
-        if(this.activeCurve)
+        if(this.activeCurve && !orbit_control)
             this.activeCurve.released();
     }
 }
