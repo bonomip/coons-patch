@@ -2,7 +2,7 @@
 
 
 //GUI VARIABLES
-var curve_type = CurveManager.types;
+var boundary_curve_type = CurveManager.types;
 var edit_curve = [' ', 'c1', 'c2', 'd1', 'd2'];
 var function_f = SurfaceManager.mixFuncType;
 var function_g = SurfaceManager.mixFuncType;
@@ -14,7 +14,7 @@ var show_rc = false;
 var show_rd = false;
 var show_patch = true;
 var show_rcd = false;
-var orbit_control = false;
+var rotation = false;
 var show_corners = false;
 var visible = true;
 var gui
@@ -35,22 +35,22 @@ function setup() {
 
   gui = p5.prototype.createGui('Coons patch');
 
-  gui.addGlobals( 'scaleFactor',
-                  'curve_type',
-                  'show_boundary_curves',
-                  'edit_curve',
+  gui.addGlobals( 'boundary_curve_type',
                   'function_f',
                   'function_g',
+                  'show_patch', 
+                  'scaleFactor',
+                  'edit_curve',
+                  'show_boundary_curves',
                   'show_rc',
                   'show_rd',
                   'show_rcd',
-                  'show_patch', 
                   'show_corners'
                   );
 
-  gui.prototype.addBoolean('orbit_control', orbit_control, myOrbitCallBack)
+  gui.prototype.addBoolean('rotation', rotation, myOrbitCallBack)
 
-  curveMgr = new CurveManager(curve_type);
+  curveMgr = new CurveManager(boundary_curve_type);
   surfMgr = new SurfaceManager(function_f, function_g, curveMgr);
 
   frameRate(30)
@@ -63,7 +63,7 @@ function draw() {
   clear();
   background(125);
 
-  if(orbit_control){
+  if(rotation){
     orbitControl(4, 4, 0);
   } else {
     if(edit_curve != ' ')
@@ -74,10 +74,10 @@ function draw() {
   
   //curves
   curveMgr.setActiveCurve(edit_curve);
-  curveMgr.setCurveType(curve_type);
+  curveMgr.setCurveType(boundary_curve_type);
 
   if(show_boundary_curves)
-    curveMgr.drawCurves(getDelta());
+    curveMgr.drawCurves(getDelta(), rotation);
   if(show_corners)
     curveMgr.drawCorners();
 
@@ -96,8 +96,7 @@ function draw() {
 }
 
 function myOrbitCallBack(value) {  
-
-  orbit_control = value;
+  rotation = value;
 
   if(value)
     loop();
@@ -114,18 +113,18 @@ function getRelativeMousePos(){
 }
 
 function mousePressed() {
-  curveMgr.mousePressed();
+  curveMgr.mousePressed(rotation);
 }
 
 function mouseDragged(){
-  curveMgr.mouseDragged();
+  curveMgr.mouseDragged(rotation);
 }
 
 function mouseReleased(){
-  if(orbit_control)
-    gui.prototype.setValue('orbit_control', false)
+  if(rotation)
+    gui.prototype.setValue('rotation', false)
   
-  curveMgr.mouseReleased();
+  curveMgr.mouseReleased(rotation);
 }
 
 // check for keyboard events

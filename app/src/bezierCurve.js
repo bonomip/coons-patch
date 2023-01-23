@@ -7,7 +7,7 @@ class BezierCurve {
     constructor(v0, v1, col) {
         this.cps = this.createDefaultControlPoints(v0, v1)
         this.color = col ? col : color('#FF99CC')
-        this.grabbed = [false, false];
+        this.grabbed = [false, false, false, false];
     }
 
     draw(delta){
@@ -24,8 +24,9 @@ class BezierCurve {
         noFill();
         
         stroke(0, 0, 0, 1);
-        circle(this.cps[1].x, this.cps[1].y, BezierCurve.cpRadius)
-        circle(this.cps[2].x, this.cps[2].y, BezierCurve.cpRadius)
+
+        for(var i = 0; i < 4; i++) 
+            circle(this.cps[i].x, this.cps[i].y, BezierCurve.cpRadius)
     }
 
     createDefaultControlPoints(cp0, cp3){
@@ -76,41 +77,34 @@ class BezierCurve {
 
     //MOUSE event listener
 
-    clicked() {
+    hasClickedOn(cp){
         var p = getRelativeMousePos();
-        var d = dist(p[0], p[1], this.cps[1].x, this.cps[1].y)
+        return dist(p[0], p[1], cp.x, cp.y) < BezierCurve.cpRadius;
+    }
 
-        if(d < BezierCurve.cpRadius){
-            this.grabbed[0] = true;
-        } else {
-            
-            d = dist(p[0], p[1], this.cps[2].x, this.cps[2].y)
-            
-            if(d < BezierCurve.cpRadius){
-                this.grabbed[1] = true;
+    clicked() {
+        for(var i = 0; i < 4; i++){
+            if(this.hasClickedOn(this.cps[i])){
+                this.grabbed[i] = true;
+                return;
             }
         }
     }
 
     released(){
-        this.grabbed = [false, false];
+        this.grabbed = [false, false, false, false];
     }
 
     dragged(){
-        if(this.grabbed[0]){
-            var p = getRelativeMousePos();
-            this.cps[1].x = p[0];
-            this.cps[1].y = p[1];
-            return true;
-        } else if (this.grabbed[1]) {
-            var p = getRelativeMousePos();
-            this.cps[2].x = p[0];
-            this.cps[2].y = p[1];
-            return true;
-        }
+
+        for(var i = 0; i < 4; i++)
+            if(this.grabbed[i]){
+                var p = getRelativeMousePos();
+                this.cps[i].x = p[0];
+                this.cps[i].y = p[1];
+                return true;
+            }
     }
-
-
 }
 
 

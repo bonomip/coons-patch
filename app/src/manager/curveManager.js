@@ -63,12 +63,12 @@ class CurveManager {
         console.log("todo!")
     }
 
-    drawCurves(delta){
+    drawCurves(delta, rot){
         this.curves.forEach(element => {
             element.draw(delta);
         });
 
-        if(this.activeCurve && !orbit_control)
+        if(this.activeCurve && !rot)
             this.activeCurve.drawEdit();
         
     }
@@ -130,23 +130,23 @@ class CurveManager {
           }
     }
 
-    mousePressed(){
-        if(this.activeCurve && !orbit_control){
+    mousePressed(rot){
+        if(this.activeCurve && !rot){
             this.activeCurve.clicked();
             loop();
         }
             
     }
 
-    mouseDragged(){
-        if(this.activeCurve && !orbit_control){
+    mouseDragged(rot){
+        if(this.activeCurve && !rot){
             this.activeCurve.dragged();
         }
             
     }
 
-    mouseReleased(){
-        if(this.activeCurve && !orbit_control){
+    mouseReleased(rot){
+        if(this.activeCurve && !rot){
             this.activeCurve.released();
             noLoop();
         }
