@@ -5,16 +5,22 @@ class SurfaceManager {
     constructor(f, g, curveMgr){
         this.f = f;
         this.g = g;
-        this.rc = new RuledSurface(this.f, curveMgr.getc1(), curveMgr.getc2(), false, false);
-        this.rd = new RuledSurface(this.g, curveMgr.getd1(), curveMgr.getd2(), false, true);
-        this.patch = new Patch(this.rc, this.rc.mixFuncs, this.rd, this.rd.mixFuncs, curveMgr.vertices);
+        this.createSurfaces(curveMgr.vertices);
+    }
+
+    createSurfaces(vertices){
+        this.rc = new RuledSurface(this.f, curveMgr.getc1(), curveMgr.getc2(), false);
+        this.rd = new RuledSurface(this.g, curveMgr.getd1(), curveMgr.getd2(), true);
+        this.patch = new Patch(this.rc, this.rc.mixFuncs, this.rd, this.rd.mixFuncs, vertices);
     }
 
     updateDelta(delta){
         this.delta = delta;
     }
 
-    
+    updateCurves(curveMgr){
+        this.createSurfaces(curveMgr.vertices);
+    }
 
     updateMixFunction(f, g){
         if(this.f != f){
@@ -62,20 +68,25 @@ SurfaceManager.checkMixFunction = function(fs){
     } 
 }
 
-SurfaceManager.LINEAR = 'Linear';
+SurfaceManager.LINEAR = 'Berstein_1';
 SurfaceManager.BERSTEIN3 = 'Berstein_3';
+SurfaceManager.BERSTEIN7 = 'Berstein_7';
 SurfaceManager.BERSTEIN15 = 'Berstein_15';
 
-SurfaceManager.mixFuncType = [SurfaceManager.LINEAR, SurfaceManager.BERSTEIN3, SurfaceManager.BERSTEIN15];
+SurfaceManager.mixFuncType = [SurfaceManager.LINEAR, SurfaceManager.BERSTEIN3, SurfaceManager.BERSTEIN7, SurfaceManager.BERSTEIN15];
 
 SurfaceManager.mixFuncs = {
-    'Linear' : [
+    'Berstein_1' : [
         function(t){return (1-t);},
         function(t){return t;}
     ],
     'Berstein_3' : [
         function(t){ return BernsteinPolynomial.three(t);},
         function(t){ return 1 - BernsteinPolynomial.three(t);},
+    ],
+    'Berstein_7' : [
+        function(t){ return BernsteinPolynomial.seven(t);},
+        function(t){ return 1 - BernsteinPolynomial.seven(t);},
     ],
     'Berstein_15' : [
         function(t){ return BernsteinPolynomial.fiveteen(t);},

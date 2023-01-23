@@ -1,29 +1,20 @@
 class CurveManager {
     constructor(type) {
-
         this.curveType = type;
-        this.curves = [] // this struct will store 
-                         // four function describing the curves
-        this.c1_col = color('#e400ff')
-        this.c2_col = color('#00FFFF')
-        this.d1_col = color('#0000FF')
-        this.d2_col = color('#FFFFFF')
-
-        this.vertices = [   createVector(-50,-50, 0), //top left
-                            createVector(50,-50, 0),  //top right
-                            createVector(50, 50, -50), //bottom right
-                            createVector(-50, 50, 0) ] //bottom left
-
+        this.initVertices();
         this.createCurves();
     }
 
     createCurves(){
+
+        this.curves = []
+
         switch(this.curveType){
-            case 'Bezier':
+            case 'Bezier (Cubic)':
                 this.createBezierCurves();
                 break;
-            case 'Polynomial':
-                this.createPolynomialCurves();
+            case 'Bezier Rational (Cubic)':
+                this.createBezierRationalCurves();
                 break;
         default:
             console.log("Invalid curve type");
@@ -36,31 +27,53 @@ class CurveManager {
             new BezierCurve(
                 this.vertices[3], 
                 this.vertices[2], 
-                this.c1_col)
+                [1, 0])
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[3], 
                 this.vertices[0], 
-                this.d1_col)
+                [0, 0])
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[0], 
                 this.vertices[1], 
-                this.c2_col)
+                [0, 1])
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[2], 
                 this.vertices[1], 
-                this.d2_col)
+                [1, 1])
             );
     }
 
-    createPolynomialCurves(){
-        //TODO: 
-        console.log("todo!")
+    createBezierRationalCurves(){
+        this.curves.push(
+            new BezierRationalCurve(
+                this.vertices[3], 
+                this.vertices[2], 
+                [1, 0])
+            );
+        this.curves.push(
+            new BezierRationalCurve(
+                this.vertices[3], 
+                this.vertices[0], 
+                [0, 0])
+            );
+        this.curves.push(
+            new BezierRationalCurve(
+                this.vertices[0], 
+                this.vertices[1], 
+                [0, 1])
+            );
+        this.curves.push(
+            new BezierRationalCurve(
+                this.vertices[2], 
+                this.vertices[1], 
+                [1, 1])
+            );
     }
 
     drawCurves(delta, rot){
@@ -68,24 +81,22 @@ class CurveManager {
             element.draw(delta);
         });
 
-        if(this.activeCurve && !rot)
+        if(this.activeCurve && !rot){
             this.activeCurve.drawEdit();
+        }
+            
         
     }
 
     drawCorners(){
-    strokeWeight(20)
-    stroke(this.curves[2].color)
-    point(this.vertices[0])
 
-    stroke(this.curves[3].color)
-    point(this.vertices[1])
-
-    stroke(this.curves[0].color)
-    point(this.vertices[2])
-
-    stroke(this.curves[1].color)
-    point(this.vertices[3])
+        var uv = [];
+        for(var i = 0; i < 4; i++){
+            strokeWeight(20)
+            uv = this.curves[(i+2)%4].col_uv;
+            stroke(switchColor(uv[0], uv[1]));
+            point(this.vertices[i]);
+        }
     }
 
     getc1(){
@@ -104,11 +115,20 @@ class CurveManager {
         return this.curves[3];
     }
 
-    setCurveType(type){
+    setCurveType(type, surfMgr){
         if(this.curveType!=type){
             this.curveType=type;
+            this.initVertices();
             this.createCurves();
+            surfMgr.updateCurves(this);
         }
+    }
+
+    initVertices(){
+        this.vertices = [   createVector(-50,-50, 0), //top left
+                            createVector(50,-50, 0),  //top right
+                            createVector(50, 50, -50), //bottom right
+                            createVector(-50, 50, 0) ] //bottom left
     }
 
     setActiveCurve(id){
@@ -128,6 +148,9 @@ class CurveManager {
             default:
                 this.activeCurve = false;
           }
+        if(boundary_curve_type == CurveManager.RATIONAL && this.activeCurve){
+            this.activeCurve.setWeights(weights['w0'], weights['w1'], weights['w2'], weights['w3']);
+        };
     }
 
     mousePressed(rot){
@@ -153,4 +176,5 @@ class CurveManager {
     }
 }
 
-CurveManager.types = ['Bezier', 'Polynomial'];
+CurveManager.RATIONAL = 'Bezier Rational (Cubic)';
+CurveManager.types = ['Bezier (Cubic)', CurveManager.RATIONAL];

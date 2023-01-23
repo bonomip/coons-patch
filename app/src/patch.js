@@ -46,8 +46,7 @@ class Patch{
         noFill();
         for (let v = 0; v <= 1; v += delta) {
             for (let u = 0; u <= 1; u += delta) {  
-                //stroke(this.color);
-                stroke(u * 300, v * 300, 255);
+                stroke(switchColor(u, v));
                 strokeWeight(2);
                 let p = this.rcd(u, v);
                 point(p.x, p.y, p.z);
@@ -59,8 +58,7 @@ class Patch{
         noFill();
         for (let v = 0; v <= 1; v += delta) {
             for (let u = 0; u <= 1; u += delta) {  
-                //stroke(this.color);
-                stroke(u * 300, v * 300, 255);
+                stroke(switchColor(u, v));
                 strokeWeight(2);
                 let p = this.func(u, v);
                 point(p.x, p.y, p.z);

@@ -32,6 +32,15 @@ BernsteinPolynomial.three = function(t){
           );
 }
 
+BernsteinPolynomial.seven = function(t){
+  return  BernsteinPolynomial.round ( 
+            BernsteinPolynomial.B(7, 0, t) +
+            BernsteinPolynomial.B(7, 3, t) +
+            BernsteinPolynomial.B(7, 4, t) +
+            BernsteinPolynomial.B(7, 5, t) 
+          );
+}
+
 BernsteinPolynomial.fiveteen = function(t){
   return  BernsteinPolynomial.round ( 
             BernsteinPolynomial.B(15, 0, t) +

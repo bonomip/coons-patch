@@ -1,18 +1,17 @@
 class RuledSurface {
 
-    constructor(mixType, c1, c2, ccolor, inv){
+    constructor(mixType, c1, c2, inv){
         this.switchMixFunction(mixType);
         this.c1 = c1;
         this.c2 = c2;
         this.inv = inv;
-        this.color = ccolor ? ccolor : color('#FFFFFF')
     }
 
     switchMixFunction(type){
 
         if( Object.keys(SurfaceManager.mixFuncs).includes(type) )
             this.mixFuncs = SurfaceManager.mixFuncs[type];
-        else 
+        else
             alert("invalid mix function type: ".concat(type));
     }
 
@@ -20,8 +19,7 @@ class RuledSurface {
         noFill();
         for (let v = 0; v <= 1; v += delta) {
             for (let u = 0; u <= 1; u += delta) {  
-                //stroke(this.color);
-                stroke(u * 300, v * 300, 255);
+                stroke(switchColor(u, v));
                 strokeWeight(2);
                 let p = this.func(u, v);
                 point(p.x, p.y, p.z);

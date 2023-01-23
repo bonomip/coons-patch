@@ -1,12 +1,8 @@
-class BezierCurve {
-    /*
-    * v0, v1 {3D vectors}: vertices of the patch
-    * cp1, cp2 {3D vectors}: control points of bezier curve
-    */
-
+class BezierRationalCurve {
     constructor(v0, v1, col_uv) {
         this.cps = this.createDefaultControlPoints(v0, v1)
         this.col_uv = col_uv 
+        this.setWeights(1, 1, 1, 1);
         this.grabbed = [false, false, false, false];
     }
 
@@ -36,7 +32,7 @@ class BezierCurve {
         if(bxstep > 0){ //horizontal
             var cp1 = createVector(cp0.x+(1*bxstep), cp0.y+(1*bystep)+(-1*flex), 0);
             var cp2 = createVector(cp0.x+(2*bxstep), cp0.y+(2*bystep)+(1*flex), 0);
-        } else { //vertical
+        } else {        //vertical
             var cp1 = createVector(cp0.x+(1*bxstep)+(-1*flex), cp0.y+(1*bystep), 0);
             var cp2 = createVector(cp0.x+(2*bxstep)+(+1*flex), cp0.y+(2*bystep), 0);
         }
@@ -44,33 +40,28 @@ class BezierCurve {
         return [cp0, cp1, cp2, cp3];
     }
 
+    setWeights(w0, w1, w2, w3){
+        this.ws = [w0, w1, w2, w3];
+    }
+
     //curve function
     func(t){
-        return this.cubic(this.cps[0], this.cps[1], this.cps[2], this.cps[3], t);
+        return this.cubic(t);
     }
 
-    lerpThree(s0, s1, s2, t){
-        let a1 = lerp(s0, s1, t);
-        let a2 = lerp(s1, s2, t);
-        let a = lerp(a1, a2, t);
-        return a;
+    cubic(t){
+        var num = createVector();
+        var den = 0;
+        var br = 0; //berstain 
+        var b = ''; //control point
+        for(var i = 0; i < 4; i++){
+            b = this.cps[i].copy(); 
+            br = BernsteinPolynomial.B(3, i, t)
+            num.add(b.mult(br).mult(this.ws[i]));
+            den += this.ws[i]*br;
+        }
+        return num.div(den);
     }
-
-    cubic(p0, p1, p2, p3, t) {
-        let v1 = this.quadratic(p0, p1, p2, t);
-        let v2 = this.quadratic(p1, p2, p3, t);
-        let x = lerp(v1.x, v2.x, t);
-        let y = lerp(v1.y, v2.y, t);
-        let z = lerp(v1.z, v2.z, t)
-        return createVector(x, y, z);
-      }
-      
-    quadratic(p0, p1, p2, t) {
-        let x = this.lerpThree(p0.x, p1.x, p2.x, t);
-        let y = this.lerpThree(p0.y, p1.y, p2.y, t);
-        let z = this.lerpThree(p0.z, p1.z, p2.z, t);
-        return createVector(x, y, z);
-      }
 
 
     //MOUSE event listener
