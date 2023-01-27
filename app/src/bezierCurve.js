@@ -3,23 +3,40 @@ class BezierCurve {
     * v0, v1 {3D vectors}: vertices of the patch
     * cp1, cp2 {3D vectors}: control points of bezier curve
     */
-    constructor(v0, v1, col_uv, quadratic) {
-        if(quadratic)
-            this.isCubic = false;
-        else    
-            this.isCubic = true;
+    constructor(v0, v1, col_uv, rational, quadratic) {
+        this.isCubic = !quadratic;
+        this.isRational = rational;
 
         this.cps = this.createDefaultControlPoints(v0, v1)
         this.col_uv = col_uv 
         this.grabbed = [false, false, false, false];
-        if(this.isCubic)
-            this.func = function(t){
-                return this.cubic(this.cps[0], this.cps[1], this.cps[2], this.cps[3], t);
-            };
-        else 
-            this.func = function(t){
-                return this.quadratic(this.cps[0], this.cps[1], this.cps[2], t);
-            };
+
+        this.initFunction();
+    }
+
+    initFunction(){
+        if(!this.isRational){
+            if(this.isCubic)
+                this.func = function(t){
+                    return this.cubic(this.cps[0], this.cps[1], this.cps[2], this.cps[3], t);
+                };
+            else 
+                this.func = function(t){
+                    return this.quadratic(this.cps[0], this.cps[1], this.cps[2], t);
+                };
+        } else {
+            this.setWeights(1, 1, 1, 1);
+
+            if(this.isCubic)
+                this.func = function(t){
+                    return this.berstein(t, 3);
+                };
+            else
+                this.func = function(t){
+                    return this.berstein(t, 2);
+                };
+        }
+        
     }
 
     draw(delta){
@@ -75,6 +92,12 @@ class BezierCurve {
         return cps;
     }
 
+    setWeights(w0, w1, w2, w3){
+        this.ws = [w0, w1, w2, w3];
+    }
+
+    // INTERPOLATION FUNCTIONS
+
     lerpThree(s0, s1, s2, t){
         let a1 = lerp(s0, s1, t);
         let a2 = lerp(s1, s2, t);
@@ -97,6 +120,20 @@ class BezierCurve {
         let z = this.lerpThree(p0.z, p1.z, p2.z, t);
         return createVector(x, y, z);
       }
+
+    berstein(t, n){
+        var num = createVector();
+        var den = 0;
+        var br = 0; //berstain 
+        var b = ''; //control point
+        for(var i = 0; i < this.cps.length; i++){
+            b = this.cps[i].copy(); 
+            br = BernsteinPolynomial.B(n, i, t)
+            num.add(b.mult(br).mult(this.ws[i]));
+            den += this.ws[i]*br;
+        }
+        return num.div(den);
+    }
 
 
     //MOUSE event listener

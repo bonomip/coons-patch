@@ -8,79 +8,34 @@ class CurveManager {
     createCurves(){
 
         this.curves = []
+        var quadratic = true;
+        var rational = false;
 
         switch(this.curveType){
-            case 'Bezier (Quadratic)':
-                this.createBezierCurves(true);
-                break;
             case 'Bezier (Cubic)':
-                this.createBezierCurves();
+                quadratic = false;
+                rational = false;
+                break;
+            case 'Bezier Rational (Quadratic)':
+                quadratic = true;
+                rational = true;
                 break;
             case 'Bezier Rational (Cubic)':
-                this.createBezierRationalCurves();
+                quadratic = false;
+                rational = true;
                 break;
         default:
-            console.log("Invalid curve type");
             break;
         }
-    }
 
-    createBezierCurves(opt_quadratic){
-        this.curves.push(
-            new BezierCurve(
-                this.vertices[3], 
-                this.vertices[2], 
-                [1, 0],
-                opt_quadratic)
-            );
-        this.curves.push(
-            new BezierCurve(
-                this.vertices[3], 
-                this.vertices[0], 
-                [0, 0],
-                opt_quadratic)
-            );
-        this.curves.push(
-            new BezierCurve(
-                this.vertices[0], 
-                this.vertices[1], 
-                [0, 1],
-                opt_quadratic)
-            );
-        this.curves.push(
-            new BezierCurve(
-                this.vertices[2], 
-                this.vertices[1], 
-                [1, 1],
-                opt_quadratic)
-            );
-    }
-
-    createBezierRationalCurves(){
-        this.curves.push(
-            new BezierRationalCurve(
-                this.vertices[3], 
-                this.vertices[2], 
-                [1, 0])
-            );
-        this.curves.push(
-            new BezierRationalCurve(
-                this.vertices[3], 
-                this.vertices[0], 
-                [0, 0])
-            );
-        this.curves.push(
-            new BezierRationalCurve(
-                this.vertices[0], 
-                this.vertices[1], 
-                [0, 1])
-            );
-        this.curves.push(
-            new BezierRationalCurve(
-                this.vertices[2], 
-                this.vertices[1], 
-                [1, 1])
-            );
+        this.curves.push( new BezierCurve( this.vertices[3], this.vertices[2], 
+                [1, 0], rational, quadratic) );
+        this.curves.push( new BezierCurve( this.vertices[3], this.vertices[0], 
+                [0, 0], rational, quadratic) );
+        this.curves.push( new BezierCurve( this.vertices[0], this.vertices[1], 
+                [0, 1], rational, quadratic) );
+        this.curves.push( new BezierCurve( this.vertices[2], this.vertices[1], 
+                [1, 1], rational, quadratic) );
     }
 
     drawCurves(delta, rot){
@@ -139,6 +94,7 @@ class CurveManager {
     }
 
     setActiveCurve(id){
+
         switch(id){
             case 'c1':
                 this.activeCurve = this.getc1();
@@ -154,10 +110,12 @@ class CurveManager {
                 break;
             default:
                 this.activeCurve = false;
-          }
-        if(boundary_curve_type == CurveManager.RATIONAL && this.activeCurve){
-            this.activeCurve.setWeights(weights['w0'], weights['w1'], weights['w2'], weights['w3']);
-        };
+        
+        }
+        
+        if(this.activeCurve){
+            this.activeCurve.setWeights(weights['w0'], weights['w1'],weights['w2'], weights['w3']);
+        }
     }
 
     mousePressed(rot){
@@ -183,5 +141,4 @@ class CurveManager {
     }
 }
 
-CurveManager.RATIONAL = 'Bezier Rational (Cubic)';
-CurveManager.types = ['Bezier (Quadratic)', 'Bezier (Cubic)', CurveManager.RATIONAL];
+CurveManager.types = ['Bezier (Quadratic)', 'Bezier (Cubic)', 'Bezier Rational (Quadratic)', 'Bezier Rational (Cubic)'];
