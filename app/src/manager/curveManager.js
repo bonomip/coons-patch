@@ -10,6 +10,9 @@ class CurveManager {
         this.curves = []
 
         switch(this.curveType){
+            case 'Bezier (Quadratic)':
+                this.createBezierCurves(true);
+                break;
             case 'Bezier (Cubic)':
                 this.createBezierCurves();
                 break;
@@ -22,30 +25,34 @@ class CurveManager {
         }
     }
 
-    createBezierCurves(){
+    createBezierCurves(opt_quadratic){
         this.curves.push(
             new BezierCurve(
                 this.vertices[3], 
                 this.vertices[2], 
-                [1, 0])
+                [1, 0],
+                opt_quadratic)
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[3], 
                 this.vertices[0], 
-                [0, 0])
+                [0, 0],
+                opt_quadratic)
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[0], 
                 this.vertices[1], 
-                [0, 1])
+                [0, 1],
+                opt_quadratic)
             );
         this.curves.push(
             new BezierCurve(
                 this.vertices[2], 
                 this.vertices[1], 
-                [1, 1])
+                [1, 1],
+                opt_quadratic)
             );
     }
 
@@ -177,4 +184,4 @@ class CurveManager {
 }
 
 CurveManager.RATIONAL = 'Bezier Rational (Cubic)';
-CurveManager.types = ['Bezier (Cubic)', CurveManager.RATIONAL];
+CurveManager.types = ['Bezier (Quadratic)', 'Bezier (Cubic)', CurveManager.RATIONAL];

@@ -3,11 +3,23 @@ class BezierCurve {
     * v0, v1 {3D vectors}: vertices of the patch
     * cp1, cp2 {3D vectors}: control points of bezier curve
     */
+    constructor(v0, v1, col_uv, quadratic) {
+        if(quadratic)
+            this.isCubic = false;
+        else    
+            this.isCubic = true;
 
-    constructor(v0, v1, col_uv) {
         this.cps = this.createDefaultControlPoints(v0, v1)
         this.col_uv = col_uv 
         this.grabbed = [false, false, false, false];
+        if(this.isCubic)
+            this.func = function(t){
+                return this.cubic(this.cps[0], this.cps[1], this.cps[2], this.cps[3], t);
+            };
+        else 
+            this.func = function(t){
+                return this.quadratic(this.cps[0], this.cps[1], this.cps[2], t);
+            };
     }
 
     draw(delta){
@@ -22,31 +34,45 @@ class BezierCurve {
 
     drawEdit(){
         noFill();
-        stroke(0, 0, 0, 1);
-        for(var i = 0; i < 4; i++) 
+        stroke(0, 0, 0, 1); 
+        for(var i = 0; i < this.cps.length; i++){
             circle(this.cps[i].x, this.cps[i].y, BezierCurve.cpRadius)
+        }
     }
 
     createDefaultControlPoints(cp0, cp3){
         let bxstep = (cp3.x - cp0.x)/3;
         let bystep = (cp3.y - cp0.y)/3;
+        let flex = 30;
+        var cps = [];
 
-        let flex = 50;
+        cps.push(cp0);
 
-        if(bxstep > 0){ //horizontal
-            var cp1 = createVector(cp0.x+(1*bxstep), cp0.y+(1*bystep)+(-1*flex), 0);
-            var cp2 = createVector(cp0.x+(2*bxstep), cp0.y+(2*bystep)+(1*flex), 0);
-        } else { //vertical
-            var cp1 = createVector(cp0.x+(1*bxstep)+(-1*flex), cp0.y+(1*bystep), 0);
-            var cp2 = createVector(cp0.x+(2*bxstep)+(+1*flex), cp0.y+(2*bystep), 0);
-        }
+        if(this.isCubic){
+            if(bxstep > 0){ //horizontal
+                cps.push(createVector(cp0.x+(1*bxstep), cp0.y+(1*bystep)+(-1*flex), 0));
+                cps.push(createVector(cp0.x+(2*bxstep), cp0.y+(2*bystep)+(1*flex), 0));
+            } else {        //vertical
+                cps.push(createVector(cp0.x+(1*bxstep)+(-1*flex), cp0.y+(1*bystep), 0));
+                cps.push(createVector(cp0.x+(2*bxstep)+(+1*flex), cp0.y+(2*bystep), 0));
+            }
+        } else {
+            if(bxstep > 0){ //horizontal
+                if(cp0.y > 0)
+                    cps.push(createVector(cp0.x+(1*bxstep), cp0.y+(1*bystep)+(-1*flex), 0));
+                else
+                    cps.push(createVector(cp0.x+(1*bxstep), cp0.y+(1*bystep)+flex, 0));
+            } else {        //vertical
+                if(cp0.x > 0)
+                    cps.push(createVector(cp0.x+(1*bxstep)+(-1*flex), cp0.y+(1*bystep), 0));
+                else 
+                    cps.push(createVector(cp0.x+(1*bxstep)+flex, cp0.y+(1*bystep), 0));
+            }
+        }   
 
-        return [cp0, cp1, cp2, cp3];
-    }
+        cps.push(cp3);
 
-    //curve function
-    func(t){
-        return this.cubic(this.cps[0], this.cps[1], this.cps[2], this.cps[3], t);
+        return cps;
     }
 
     lerpThree(s0, s1, s2, t){
@@ -81,7 +107,7 @@ class BezierCurve {
     }
 
     clicked() {
-        for(var i = 0; i < 4; i++){
+        for(var i = 0; i < this.cps.length; i++){
             if(this.hasClickedOn(this.cps[i])){
                 this.grabbed[i] = true;
                 return;
@@ -95,7 +121,7 @@ class BezierCurve {
 
     dragged(){
 
-        for(var i = 0; i < 4; i++)
+        for(var i = 0; i < this.cps.length; i++)
             if(this.grabbed[i]){
                 var p = getRelativeMousePos();
                 this.cps[i].x = p[0];
