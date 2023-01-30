@@ -1,0 +1,65 @@
+
+BODY { background-color: #ffffff;
+       font-family: Verdana;
+       color: #000000;
+}
+
+H1 {
+	color: #000000;
+	font-family: Verdana;
+	font-size: 300%;
+	text-align: center;
+	position: relative;
+}
+
+H2 {
+	color: #494949;
+	font-family: Verdana;
+	font-size:150%;
+	text-align: center;
+	position: relative;
+}
+
+HR {
+	color: #FFCC66;
+
+}
+
+TD {
+        text-align: center;
+
+}
+
+IMG {
+	border-color: #FFCC66;
+
+}
+
+:link {
+        color: #3399FF;
+}
+
+:visited {
+        color: #3399FF;
+}
+
+
+p {
+	text-align: justify;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+ul {
+	text-align: justify;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+.foot {
+        font-size: 80%;
+        color: rgb(42, 42, 42);
+        text-align: right;
+}
+
+
